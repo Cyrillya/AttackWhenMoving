@@ -24,11 +24,11 @@ public class ModEntry : Mod
         helper.Events.GameLoop.GameLaunched += (sender, args) => { GenericModConfigMenuIntegration.Init(); };
 
         helper.Events.GameLoop.UpdateTicking += (sender, args) => {
+            if (!Context.IsPlayerFree) return;
             if (Game1.player is null) return;
             var who = Game1.player;
             if (!Utils.DidPlayerJustLeftHold()) return;
             if (!who.IsLocalPlayer) return;
-            if (who.CurrentTool == null) return;
             if (!Config.WeaponAutoswing) return;
             if (who.CurrentTool is not MeleeWeapon weapon) return;
 
@@ -216,6 +216,7 @@ public class ModEntry : Mod
 
     private static void FaceMouse(Farmer who) {
         if (!Config.FaceMouseWhenAttack) return;
+        if (!who.IsLocalPlayer) return;
 
         var plrPosition = who.getLocalPosition(Game1.viewport);
         var mousePosition = Game1.getMousePosition().ToVector2();
