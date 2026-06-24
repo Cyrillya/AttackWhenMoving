@@ -1,14 +1,10 @@
 {
-  "config.dummy-input-box.name": "Input Box for Test",
-  "config.dummy-input-box.tooltip": "A dummy input box for test purpose.",
-  "config.use-system-ime.name": "Use System IME",
-  "config.use-system-ime.tooltip": "Whether to use system IME instead of ingame IME when typing. Turn this on if the ingame IME panel doesn't support your IME. Not recommended to turn it on.",
-  "config.show-log-text.name": "Show Debug Text",
-  "config.selected-text-color.name": "Selected Text Color",
-  "config.selected-text-color.tooltip": "The color of the selected text in the ingame IME panel.",
-  "config.unselected-text-color.name": "Unselected Text Color",
-  "config.unselected-text-color.tooltip": "The color of the unselected text in the ingame IME panel.",
-  "config.composition-text-color.name": "Composition Text Color",
-  "config.composition-text-color.tooltip": "The color of the composition text in the ingame IME panel.",
-  "config.color-change-note": "Since Generic Mod Config Menu doesn't support color adjustments, please manually modify the config.json file to change the colors for [selected text/unselected text/composition text]. You can download GMCM Options Mod to adjust colors via GUI as well, link here: https://www.nexusmods.com/stardewvalley/mods/10505"
+  "config.face-mouse.name": "Face Mouse When Attack",
+  "config.face-mouse.tooltip": "When enabled, the character will face the mouse direction when attacking",
+  "config.weapon-autoswing.name": "Weapon Autoswing",
+  "config.weapon-autoswing.tooltip": "When enabled, holding down the attack button will continuously use the weapon's light attack",
+  "config.enable-weapons.name": "Allow Moving for Weapons",
+  "config.enable-weapons.tooltip": "Whether to allow moving when using weapons",
+  "config.enable-tools.name": "Allow Moving for Tools",
+  "config.enable-tools.tooltip": "Whether to allow moving when using tools"
 }

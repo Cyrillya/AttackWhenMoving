@@ -8,7 +8,7 @@ using StardewModdingAPI.Utilities;
 
 using StardewValley;
 
-namespace InputMethodFix.Config;
+namespace AttackWhenMoving.Config;
 
 /// <summary>The API which lets other mods add a config UI through Generic Mod Config Menu.</summary>
 public interface IGenericModConfigMenuApi

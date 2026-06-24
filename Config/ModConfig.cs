@@ -2,14 +2,12 @@
 
 using StardewValley.BellsAndWhistles;
 
-namespace InputMethodFix.Config;
+namespace AttackWhenMoving.Config;
 
 internal sealed class ModConfig
 {
-    public string DummyInputBox { get; set; } = "";
-    public bool UseSystemIME { get; set; } = false;
-    public bool ShowLogText { get; set; } = false;
-    public Color SelectedTextColor { get; set; } = SpriteText.color_Cyan;
-    public Color UnselectedTextColor { get; set; } = SpriteText.color_White;
-    public Color CompositionTextColor { get; set; } = SpriteText.color_White;
+    public bool FaceMouseWhenAttack { get; set; } = true;
+    public bool WeaponAutoswing { get; set; } = true;
+    public bool EnableForWeapons { get; set; } = true;
+    public bool EnableForTools { get; set; } = true;
 }

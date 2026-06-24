@@ -1,10 +1,10 @@
 {
-  "Name": "输入法修复（Input Method Fix）",
+  "Name": "Attack When Moving",
   "Author": "Cyrilly",
   "Version": "%ProjectVersion%",
-  "Description": "解决星露谷卡输入法/输入时摸黑问题，支持搜狗、微软、讯飞等输入法。",
-  "UniqueID": "Cyrilly.InputMethodFix",
-  "EntryDll": "InputMethodFix.dll",
+  "Description": "Allows you to attack without stop moving. Inspired by Terraria",
+  "UniqueID": "Cyrilly.AttackWhenMoving",
+  "EntryDll": "AttackWhenMoving.dll",
   "MinimumApiVersion": "4.0.0",
-  "UpdateKeys": [ "Nexus:35313", "GitHub:Cyrillya/InputMethodFix" ]
+  "UpdateKeys": [ "GitHub:Cyrillya/AttackWhenMoving" ]
 }

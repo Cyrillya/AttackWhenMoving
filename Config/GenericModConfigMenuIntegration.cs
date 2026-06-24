@@ -1,8 +1,7 @@
-﻿namespace InputMethodFix.Config;
+﻿namespace AttackWhenMoving.Config;
 
 internal class GenericModConfigMenuIntegration
 {
-
     public static void Init()
     {
         // 兼容Generic Mod Config Menu
@@ -19,64 +18,35 @@ internal class GenericModConfigMenuIntegration
             save: () => helper.WriteConfig(ModEntry.Config)
         );
 
-        configMenu.AddTextOption(
+        configMenu.AddBoolOption(
             mod: modManifest,
-            name: () => Localization.Config_DummyInputBox_Name(),
-            tooltip: () => Localization.Config_DummyInputBox_Tooltip(),
-            getValue: () => config.DummyInputBox,
-            setValue: value => config.DummyInputBox = value
+            name: () => Localization.Config_FaceMouse_Name(),
+            tooltip: () => Localization.Config_FaceMouse_Tooltip(),
+            getValue: () => config.FaceMouseWhenAttack,
+            setValue: value => config.FaceMouseWhenAttack = value
+        );
+
+        configMenu.AddBoolOption(
+            mod: modManifest,
+            name: () => Localization.Config_WeaponAutoswing_Name(),
+            tooltip: () => Localization.Config_WeaponAutoswing_Tooltip(),
+            getValue: () => config.WeaponAutoswing,
+            setValue: value => config.WeaponAutoswing = value
+        );
+
+        configMenu.AddBoolOption(
+            mod: modManifest,
+            name: () => Localization.Config_EnableWeapons_Name(),
+            tooltip: () => Localization.Config_EnableWeapons_Name(),
+            getValue: () => config.EnableForWeapons,
+            setValue: value => config.EnableForWeapons = value
         );
         configMenu.AddBoolOption(
             mod: modManifest,
-            name: () => Localization.Config_UseSystemIme_Name(),
-            tooltip: () => Localization.Config_UseSystemIme_Tooltip(),
-            getValue: () => config.UseSystemIME,
-            setValue: value => config.UseSystemIME = value
+            name: () => Localization.Config_EnableTools_Name(),
+            tooltip: () => Localization.Config_EnableTools_Tooltip(),
+            getValue: () => config.EnableForTools,
+            setValue: value => config.EnableForTools = value
         );
-        configMenu.AddBoolOption(
-            mod: modManifest,
-            name: () => Localization.Config_ShowLogText_Name(),
-            tooltip: () => null,
-            getValue: () => config.ShowLogText,
-            setValue: value => config.ShowLogText = value
-        );
-
-        // GMCM Options 模组提供颜色支持
-
-        var configMenuExt = helper.ModRegistry.GetApi<IGMCMOptionsAPI>("jltaylor-us.GMCMOptions");
-
-        if (configMenuExt is null)
-        {
-            configMenu.AddParagraph(
-                mod: modManifest,
-                text: () => Localization.Config_ColorChangeNote()
-            );
-            return;
-        }
-
-        configMenuExt.AddColorOption(
-            mod: modManifest,
-            getValue: () => config.SelectedTextColor,
-            setValue: (c) => config.SelectedTextColor = c,
-            name: () => Localization.Config_SelectedTextColor_Name(),
-            tooltip: () => Localization.Config_SelectedTextColor_Tooltip(),
-            showAlpha: false,
-            colorPickerStyle: (uint) (IGMCMOptionsAPI.ColorPickerStyle.AllStyles | IGMCMOptionsAPI.ColorPickerStyle.RadioChooser));
-        configMenuExt.AddColorOption(
-            mod: modManifest,
-            getValue: () => config.UnselectedTextColor,
-            setValue: (c) => config.UnselectedTextColor = c,
-            name: () => Localization.Config_UnselectedTextColor_Name(),
-            tooltip: () => Localization.Config_UnselectedTextColor_Tooltip(),
-            showAlpha: false,
-            colorPickerStyle: (uint) (IGMCMOptionsAPI.ColorPickerStyle.AllStyles | IGMCMOptionsAPI.ColorPickerStyle.RadioChooser));
-        configMenuExt.AddColorOption(
-            mod: modManifest,
-            getValue: () => config.CompositionTextColor,
-            setValue: (c) => config.CompositionTextColor = c,
-            name: () => Localization.Config_CompositionTextColor_Name(),
-            tooltip: () => Localization.Config_CompositionTextColor_Tooltip(),
-            showAlpha: false,
-            colorPickerStyle: (uint) (IGMCMOptionsAPI.ColorPickerStyle.AllStyles | IGMCMOptionsAPI.ColorPickerStyle.RadioChooser));
     }
 }

@@ -44,7 +44,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 using StardewModdingAPI;
 
-namespace InputMethodFix.Config;
+namespace AttackWhenMoving.Config;
 
 /// <summary>The API which lets other mods add a config UI using one of the complex options defined in GMCMOptions.</summary>
 public interface IGMCMOptionsAPI
