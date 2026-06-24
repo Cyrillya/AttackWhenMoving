@@ -1,8 +1,8 @@
 {
-  "Name": "Attack When Moving",
+  "Name": "Combat QoL",
   "Author": "Cyrilly",
   "Version": "%ProjectVersion%",
-  "Description": "Allows you to attack without stop moving. Inspired by Terraria",
+  "Description": "A Quality of Life mod that improves Stardew Valley combat experience by increasing player's mobility",
   "UniqueID": "Cyrilly.AttackWhenMoving",
   "EntryDll": "AttackWhenMoving.dll",
   "MinimumApiVersion": "4.0.0",
