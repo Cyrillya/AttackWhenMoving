@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using AttackWhenMoving.Config;
+﻿using AttackWhenMoving.Config;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
