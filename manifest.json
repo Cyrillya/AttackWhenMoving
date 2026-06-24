@@ -6,5 +6,5 @@
   "UniqueID": "Cyrilly.AttackWhenMoving",
   "EntryDll": "AttackWhenMoving.dll",
   "MinimumApiVersion": "4.0.0",
-  "UpdateKeys": [ "GitHub:Cyrillya/AttackWhenMoving" ]
+  "UpdateKeys": [ "Nexus:48104", "GitHub:Cyrillya/AttackWhenMoving" ]
 }
