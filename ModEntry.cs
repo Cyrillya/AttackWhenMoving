@@ -1,4 +1,6 @@
-﻿using AttackWhenMoving.Config;
+﻿using System.Reflection;
+using System.Reflection.Emit;
+using AttackWhenMoving.Config;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -10,6 +12,7 @@ namespace AttackWhenMoving;
 
 public class ModEntry : Mod
 {
+    internal static Harmony HarmonyEntry;
     internal static ModConfig Config;
     internal static ModEntry Instance;
 
@@ -24,58 +27,36 @@ public class ModEntry : Mod
         helper.Events.GameLoop.GameLaunched += (sender, args) => { GenericModConfigMenuIntegration.Init(); };
 
         helper.Events.GameLoop.UpdateTicking += (sender, args) => {
-            if (!Context.IsPlayerFree) return;
-            if (Game1.player is null) return;
-            var who = Game1.player;
-            if (!Utils.DidPlayerJustLeftHold()) return;
-            if (!who.IsLocalPlayer) return;
-            if (!Config.WeaponAutoswing) return;
-            if (who.CurrentTool is not MeleeWeapon weapon) return;
+            if (!ShouldAutoswingNow(out var weapon)) return;
 
-            if (weapon.isScythe() && !who.UsingTool)
+            var who = Game1.player;
+            if (weapon != null && weapon.isScythe() && !who.UsingTool)
                 who.BeginUsingTool();
             else
                 who.FireTool();
         };
 
-        var harmony = new Harmony(ModManifest.UniqueID);
+        HarmonyEntry = new Harmony(ModManifest.UniqueID);
 
-        var farmerMoveMethod = AccessTools.Method(typeof(Farmer), nameof(Farmer.MovePosition));
-        if (farmerMoveMethod != null) {
-            harmony.Patch(
-                original: farmerMoveMethod,
-                prefix: new HarmonyMethod(typeof(ModEntry), nameof(HookFarmerMovePositionPrefix)),
-                postfix: new HarmonyMethod(typeof(ModEntry), nameof(HookFarmerMovePositionPostfix))
-            );
-        }
+        Hook(AccessTools.Method(typeof(Farmer), nameof(Farmer.MovePosition)),
+            nameof(HookFarmerMovePositionPrefix), nameof(HookFarmerMovePositionPostfix));
+        Hook(AccessTools.Method(typeof(MeleeWeapon), nameof(MeleeWeapon.setFarmerAnimating)),
+            nameof(HookSetFarmerAnimatingMethod));
+        Hook(AccessTools.Method(typeof(MeleeWeapon), nameof(MeleeWeapon.animateSpecialMove)),
+            nameof(HookAnimateSpecialMoveMethod));
+        Hook(AccessTools.Method(typeof(Farmer), nameof(Farmer.warpFarmer), new[] { typeof(Warp), typeof(int) }),
+            nameof(HookWarpFarmerMethod));
+    }
 
-        var setFarmerAnimatingMethod = AccessTools.Method(typeof(MeleeWeapon), nameof(MeleeWeapon.setFarmerAnimating));
-
-        if (setFarmerAnimatingMethod != null) {
-            harmony.Patch(
-                original: setFarmerAnimatingMethod,
-                prefix: new HarmonyMethod(typeof(ModEntry), nameof(HookSetFarmerAnimatingMethod))
-            );
-        }
-
-        var animateSpecialMoveMethod = AccessTools.Method(typeof(MeleeWeapon), nameof(MeleeWeapon.animateSpecialMove));
-
-        if (animateSpecialMoveMethod != null) {
-            harmony.Patch(
-                original: animateSpecialMoveMethod,
-                prefix: new HarmonyMethod(typeof(ModEntry), nameof(HookAnimateSpecialMoveMethod))
-            );
-        }
-
-        var warpFarmerMethod =
-            AccessTools.Method(typeof(Farmer), nameof(Farmer.warpFarmer), new[] { typeof(Warp), typeof(int) });
-
-        if (warpFarmerMethod != null) {
-            harmony.Patch(
-                original: warpFarmerMethod,
-                prefix: new HarmonyMethod(typeof(ModEntry), nameof(HookWarpFarmerMethod))
-            );
-        }
+    private static MethodInfo? Hook(MethodInfo? method, string? prefixName = null, string? postfixName = null,
+        string? transpilerName = null) {
+        if (method is null) return null;
+        return HarmonyEntry.Patch(
+            original: method,
+            prefix: prefixName is null ? null : new HarmonyMethod(typeof(ModEntry), prefixName),
+            postfix: postfixName is null ? null : new HarmonyMethod(typeof(ModEntry), postfixName),
+            transpiler: transpilerName is null ? null : new HarmonyMethod(typeof(ModEntry), transpilerName)
+        );
     }
 
     public static void HookFarmerMovePositionPrefix(Farmer __instance, GameTime time,
@@ -84,22 +65,17 @@ public class ModEntry : Mod
         var farmer = __instance;
         _oldCanMove = farmer.CanMove;
         _oldUseTool = farmer.UsingTool;
-        if (!farmer.UsingTool) return;
-        if (farmer.canStrafeForToolUse()) return;
-        if (Game1.panMode) return;
-
-        bool ok = (!farmer.CurrentTool.IsTool() && Config.EnableForWeapons) ||
-                  (farmer.CurrentTool.IsTool() && Config.EnableForTools);
-        if (!ok) return;
+        if (Game1.panMode ||
+            !Context.IsPlayerFree ||
+            !farmer.UsingTool ||
+            Game1.isWarping ||
+            farmer.canStrafeForToolUse() ||
+            !farmer.CurrentTool.AllowMoving())
+            return;
 
         farmer.CanMove = true;
         farmer.UsingTool = false;
         HandleMovementInput();
-
-        // GameUpdateControlInputMethod?.Invoke(Game1.game1, new object[] { time });
-        // Console.WriteLine($"[AttackWhenMoving]: {farmer.Name} Tool CanMove = {farmer.CanMove}");
-        // Console.WriteLine($"[AttackWhenMoving]: Move Speed = {farmer.getMovementSpeed()}");
-        // Console.WriteLine($"[AttackWhenMoving]: Movement Directions = {farmer.movementDirections.Count}");
     }
 
     private static void HandleMovementInput() {
@@ -242,10 +218,21 @@ public class ModEntry : Mod
     }
 
     public static bool HookWarpFarmerMethod(Farmer __instance, Warp w, int warp_collide_direction) {
-        if (_oldCanMove != __instance.CanMove && _oldUseTool != __instance.UsingTool) {
-            return false;
-        }
+        return _oldCanMove == __instance.CanMove || _oldUseTool == __instance.UsingTool;
+    }
 
+    private static bool ShouldAutoswingNow(out MeleeWeapon? weapon) {
+        weapon = null;
+        if (!Config.WeaponAutoswing ||
+            Utils.MouseOnMenu() ||
+            !Context.IsPlayerFree ||
+            Game1.isWarping ||
+            Game1.player is null)
+            return false;
+        var who = Game1.player;
+        if (!Utils.DidPlayerJustLeftHold() || who.CurrentTool is not MeleeWeapon w)
+            return false;
+        weapon = w;
         return true;
     }
 }
