@@ -7,7 +7,38 @@ namespace AttackWhenMoving;
 
 public static class Utils
 {
+    public static void ForceHideMouseInGamepadMode() {
+        if (!Game1.options.gamepadControls)
+            return;
+        Game1.mouseCursorTransparency = 0f;
+        Game1.timerUntilMouseFade = 0;
+        Game1.lastCursorMotionWasMouse = false;
+    }
+
+    public static void UseWeapon(MeleeWeapon? weapon) {
+        var who = Game1.player;
+        if (weapon != null && weapon.isScythe() && !who.UsingTool)
+            who.BeginUsingTool();
+        else
+            who.FireTool();
+
+        // 特判，因为我没招了！
+        var currentPadState = Game1.input.GetGamePadState();
+        var stick = currentPadState.ThumbSticks.Right;
+        var config = ModEntry.Config;
+        if (config.ControllerAttackMode is "edge" && stick.Length() > config.ControllerAttackDeadZone &&
+            !who.UsingTool && !weapon.isScythe()) {
+            who.completelyStopAnimatingOrDoingAction();
+            who.CanMove = false;
+            who.UsingTool = true;
+            who.canReleaseTool = true;
+            weapon.setFarmerAnimating(who);
+        }
+    }
+
     public static bool MouseOnMenu() {
+        if (Game1.activeClickableMenu != null) return true;
+
         Game1.PushUIMode();
         if (Game1.onScreenMenus
             .Where(menu => Game1.IsHudDrawn || menu == Game1.chatBox)
@@ -43,6 +74,13 @@ public static class Utils
         }
 
         if (Game1.isOneOfTheseKeysDown(Game1.input.GetKeyboardState(), Game1.options.useToolButton)) {
+            return true;
+        }
+
+        var currentPadState = Game1.input.GetGamePadState();
+        var stick = currentPadState.ThumbSticks.Right;
+        var config = ModEntry.Config;
+        if (config.ControllerAttackMode is "edge" && stick.Length() > config.ControllerAttackDeadZone) {
             return true;
         }
 

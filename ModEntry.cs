@@ -16,6 +16,7 @@ public class ModEntry : Mod
     internal static ModConfig Config;
     internal static ModEntry Instance;
 
+    private static FieldInfo _meleeWeaponAnotherClick;
     private static bool _oldCanMove;
     private static bool _oldUseTool;
 
@@ -24,16 +25,14 @@ public class ModEntry : Mod
         Config = Helper.ReadConfig<ModConfig>();
         Localization.Init(helper.Translation);
 
+        _meleeWeaponAnotherClick =
+            typeof(MeleeWeapon).GetField("anotherClick", BindingFlags.NonPublic | BindingFlags.Instance);
+
         helper.Events.GameLoop.GameLaunched += (sender, args) => { GenericModConfigMenuIntegration.Init(); };
 
         helper.Events.GameLoop.UpdateTicking += (sender, args) => {
             if (!ShouldAutoswingNow(out var weapon)) return;
-
-            var who = Game1.player;
-            if (weapon != null && weapon.isScythe() && !who.UsingTool)
-                who.BeginUsingTool();
-            else
-                who.FireTool();
+            Utils.UseWeapon(weapon);
         };
 
         HarmonyEntry = new Harmony(ModManifest.UniqueID);
@@ -46,6 +45,13 @@ public class ModEntry : Mod
             nameof(HookAnimateSpecialMoveMethod));
         Hook(AccessTools.Method(typeof(Farmer), nameof(Farmer.warpFarmer), new[] { typeof(Warp), typeof(int) }),
             nameof(HookWarpFarmerMethod));
+        Hook(GetUpdateControlInputMethod(),
+            transpilerName: nameof(UpdateControlInputTranspiler));
+    }
+
+    private static MethodInfo? GetUpdateControlInputMethod() {
+        var displayClass = typeof(Game1).GetNestedType("<>c__DisplayClass978_0", BindingFlags.NonPublic);
+        return displayClass?.GetMethod("<UpdateControlInput>b__0", BindingFlags.Instance | BindingFlags.NonPublic);
     }
 
     private static MethodInfo? Hook(MethodInfo? method, string? prefixName = null, string? postfixName = null,
@@ -190,20 +196,31 @@ public class ModEntry : Mod
         farmer.UsingTool = _oldUseTool;
     }
 
-    private static void FaceMouse(Farmer who) {
-        if (!Config.FaceMouseWhenAttack) return;
-        if (!who.IsLocalPlayer) return;
+    private static bool FaceMouse(Farmer who) {
+        if (!Config.FaceMouseWhenAttack) return false;
+        if (!who.IsLocalPlayer) return false;
 
         var plrPosition = who.getLocalPosition(Game1.viewport);
-        var mousePosition = Game1.getMousePosition().ToVector2();
-        var direPosition = mousePosition - plrPosition;
-        var theta = Math.Atan2(direPosition.Y, direPosition.X);
+        double theta;
+        if (Game1.options.gamepadControls) {
+            var currentPadState = Game1.input.GetGamePadState();
+            var stick = currentPadState.ThumbSticks.Right;
+            if (stick.Length() <= Config.ControllerAimDeadZone) return false;
+            theta = Math.Atan2(stick.Y, stick.X);
+        }
+        else {
+            var mousePosition = Game1.getMousePosition().ToVector2();
+            var direPosition = mousePosition - plrPosition;
+            theta = Math.Atan2(-direPosition.Y, direPosition.X);
+        }
+
         who.FacingDirection = theta switch {
-            > MathF.PI / 4 and < 3 * MathF.PI / 4 => 2, // Up
-            < -MathF.PI / 4 and > -3 * MathF.PI / 4 => 0, // Down
+            > MathF.PI / 4 and < 3 * MathF.PI / 4 => 0, // Up
+            < -MathF.PI / 4 and > -3 * MathF.PI / 4 => 2, // Down
             >= -MathF.PI / 4 and <= MathF.PI / 4 => 1, // Right
             _ => 3 // Left
         };
+        return true;
     }
 
     public static void HookSetFarmerAnimatingMethod(MeleeWeapon __instance, Farmer who) {
@@ -221,18 +238,78 @@ public class ModEntry : Mod
         return _oldCanMove == __instance.CanMove || _oldUseTool == __instance.UsingTool;
     }
 
-    private static bool ShouldAutoswingNow(out MeleeWeapon? weapon) {
-        weapon = null;
-        if (!Config.WeaponAutoswing ||
-            Utils.MouseOnMenu() ||
+    private static bool SuitableAttackTiming() {
+        if (Utils.MouseOnMenu() ||
             !Context.IsPlayerFree ||
             Game1.isWarping ||
             Game1.player is null)
             return false;
         var who = Game1.player;
-        if (!Utils.DidPlayerJustLeftHold() || who.CurrentTool is not MeleeWeapon w)
+        if (who.CurrentTool is not MeleeWeapon ||
+            who.swimming.Value || who.bathingClothes.Value || who.onBridge.Value)
             return false;
-        weapon = w;
         return true;
+    }
+
+    private static bool ShouldAutoswingNow(out MeleeWeapon? weapon) {
+        weapon = null;
+        if (!Config.WeaponAutoswing ||
+            !SuitableAttackTiming() ||
+            !Utils.DidPlayerJustLeftHold())
+            return false;
+        weapon = Game1.player.CurrentTool as MeleeWeapon;
+        return true;
+    }
+
+    internal static bool ShouldStickMoveMouse() {
+        if (!Game1.options.gamepadControls) return false;
+        if (Config.ControllerAttackMode is "mouse") return true;
+        if (!SuitableAttackTiming()) return true;
+
+        Utils.ForceHideMouseInGamepadMode();
+        return false;
+    }
+
+    private static IEnumerable<CodeInstruction> UpdateControlInputTranspiler(
+        IEnumerable<CodeInstruction> instructions) {
+        // Match pattern: call Game1::get_options() + ldfld Options::gamepadControls + brfalse/brfalse_s
+        // Replace with:  call ModEntry::OverrideGamepadControls() + brfalse/brfalse_s (same target)
+        var getOptions = typeof(Game1).GetMethod("get_options", BindingFlags.Public | BindingFlags.Static);
+        var gamepadControlsField =
+            typeof(Options).GetField("gamepadControls", BindingFlags.Public | BindingFlags.Instance);
+        var overrideMethod = typeof(ModEntry).GetMethod(nameof(ShouldStickMoveMouse),
+            BindingFlags.NonPublic | BindingFlags.Static);
+
+        if (getOptions is null || gamepadControlsField is null || overrideMethod is null) {
+            Instance.Monitor.Log(
+                $"UpdateControlInputTranspiler: reflection failed — getOptions={getOptions is not null}, " +
+                $"gamepadControlsField={gamepadControlsField is not null}, overrideMethod={overrideMethod is not null}. " +
+                "The transpiler will be skipped; gamepad-controls logic remains unmodified.",
+                LogLevel.Error);
+            return instructions;
+        }
+
+        var codes = new List<CodeInstruction>(instructions);
+        for (int i = 0; i < codes.Count - 2; i++) {
+            if (codes[i].opcode != OpCodes.Call || !Equals(codes[i].operand, getOptions))
+                continue;
+            if (codes[i + 1].opcode != OpCodes.Ldfld || !Equals(codes[i + 1].operand, gamepadControlsField))
+                continue;
+            if (codes[i + 2].opcode != OpCodes.Brfalse && codes[i + 2].opcode != OpCodes.Brfalse_S)
+                continue;
+
+            // Save the branch target label
+            var branchTarget = codes[i + 2].operand;
+
+            // Replace the 3 instructions with 2: call OverrideGamepadControls + brfalse
+            codes[i].opcode = OpCodes.Call;
+            codes[i].operand = overrideMethod;
+            codes.RemoveRange(i + 1, 2);
+            codes.Insert(i + 1, new CodeInstruction(OpCodes.Brfalse, branchTarget));
+
+            break; // Only replace the first occurrence
+        }
+
+        return codes;
     }
 }
