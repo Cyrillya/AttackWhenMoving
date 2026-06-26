@@ -7,6 +7,20 @@ namespace AttackWhenMoving;
 
 public static class Utils
 {
+    public static void CancelSpecialAttack(Farmer who) {
+        if (who.CurrentTool is not MeleeWeapon { isOnSpecial: true } weapon) return;
+        
+        weapon.isOnSpecial = false;
+        who.UsingTool = false;
+        who.CanMove = true;
+        who.FarmerSprite.PauseForSingleAnimation = false;
+        who.usingSlingshot = false;
+        who.canReleaseTool = false;
+        
+        who.Halt();
+        who.Sprite.StopAnimation();
+    }
+
     public static void ForceHideMouseInGamepadMode() {
         if (!Game1.options.gamepadControls)
             return;

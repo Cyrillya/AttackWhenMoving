@@ -31,8 +31,10 @@ public class ModEntry : Mod
         helper.Events.GameLoop.GameLaunched += (sender, args) => { GenericModConfigMenuIntegration.Init(); };
 
         helper.Events.GameLoop.UpdateTicking += (sender, args) => {
-            if (!ShouldAutoswingNow(out var weapon)) return;
-            Utils.UseWeapon(weapon);
+            if (TryPerformAttackNow(out var weapon)) {
+                if (Config.SpecialAttackCancellable) Utils.CancelSpecialAttack(Game1.player);
+                Utils.UseWeapon(weapon);
+            }
         };
 
         HarmonyEntry = new Harmony(ModManifest.UniqueID);
@@ -251,11 +253,12 @@ public class ModEntry : Mod
         return true;
     }
 
-    private static bool ShouldAutoswingNow(out MeleeWeapon? weapon) {
+    private static bool TryPerformAttackNow(out MeleeWeapon? weapon) {
         weapon = null;
-        if (!Config.WeaponAutoswing ||
-            !SuitableAttackTiming() ||
+        if (!SuitableAttackTiming() ||
             !Utils.DidPlayerJustLeftHold())
+            return false;
+        if (!Config.WeaponAutoswing && !Game1.didPlayerJustLeftClick(true))
             return false;
         weapon = Game1.player.CurrentTool as MeleeWeapon;
         return true;

@@ -7,6 +7,8 @@
   "config.enable-weapons.tooltip": "开启后，使用武器时人物不会停下",
   "config.enable-tools.name": "使用工具时允许移动",
   "config.enable-tools.tooltip": "开启后，使用工具时人物不会停下",
+  "config.special-cancel.name": "允许取消特殊攻击",
+  "config.special-cancel.tooltip": "开启后，特殊攻击动作可被普攻取消",
   "config.controller-attack-mode.name": "右摇杆攻击模式",
   "config.controller-attack-mode.tooltip": "设置右摇杆在攻击时的控制逻辑：\n- 模拟鼠标：直接移动鼠标（与原版无异）\n- 定向攻击：摇杆独立控制方向，按「使用」键使用武器\n- 边缘触发：摇杆控制方向，推至边缘自动攻击\n必须同时开启「攻击面向鼠标」才能独立控制方向\n必须同时开启「武器自动挥舞」才能正常使用「边缘触发」模式",
   "config.controller-attack-mode.mouse": "模拟鼠标",

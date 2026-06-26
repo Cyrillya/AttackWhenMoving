@@ -7,6 +7,8 @@
   "config.enable-weapons.tooltip": "Whether to allow moving when using weapons",
   "config.enable-tools.name": "Allow Moving for Tools",
   "config.enable-tools.tooltip": "Whether to allow moving when using tools",
+  "config.special-cancel.name": "Allow Special Attack Cancel",
+  "config.special-cancel.tooltip": "When enabled, special attack animations can be canceled by normal attacks.",
   "config.controller-attack-mode.name": "Right Stick Attack Mode",
   "config.controller-attack-mode.tooltip": "Sets the right stick's control logic during attack:\n- Mouse Aim: directly moves the mouse (same as default)\n- Directional Attack: stick independently controls direction, press 'Use' to use weapon\n- Edge Trigger: stick controls direction, auto-attack when pushed to the edge\n'Face Mouse When Attack' must be enabled for directional control to work\n'Weapon Autoswing' must be enabled for 'Edge Trigger' mode to function properly",
   "config.controller-attack-mode.mouse": "Mouse Aim",

@@ -54,6 +54,14 @@ internal class GenericModConfigMenuIntegration
             setValue: value => config.EnableForTools = value
         );
         
+        configMenu.AddBoolOption(
+            mod: modManifest,
+            name: () => Localization.Config_SpecialCancel_Name(),
+            tooltip: () => Localization.Config_SpecialCancel_Tooltip(),
+            getValue: () => config.SpecialAttackCancellable,
+            setValue: value => config.SpecialAttackCancellable = value
+        );
+        
         configMenu.AddSectionTitle(
             mod: modManifest,
             text: () => Localization.Config_HeaderControllerSettings()

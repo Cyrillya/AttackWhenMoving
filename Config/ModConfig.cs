@@ -10,6 +10,7 @@ internal sealed class ModConfig
     public bool WeaponAutoswing { get; set; } = true;
     public bool EnableForWeapons { get; set; } = true;
     public bool EnableForTools { get; set; } = true;
+    public bool SpecialAttackCancellable { get; set; } = true;
 
     /// <summary>
     /// Options: mouse, direction, edge
