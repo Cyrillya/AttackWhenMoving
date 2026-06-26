@@ -12,11 +12,11 @@ Inspired by Terraria
 
 ## ❤️ Key Features
 
-- Allow movement while using weapons or tools (can be enabled/disabled separately for weapons and tools)
-- Face the mouse cursor while attacking (also supports gamepad right-stick aiming)
-- Weapon autoswing support (when enabled, weapons will continue swinging while the use key is held)
+- **Allow movement** while using weapons or tools (can be enabled/disabled separately for weapons and tools)
+- **Face the mouse cursor** while attacking (also supports gamepad **right-stick aiming**)
+- **Weapon autoswing** support (when enabled, weapons will continue swinging while the use key is held)
 - **Controller right-stick support** — three modes: Mouse Aim, Directional Attack, Edge Trigger
-- **Cancel special attacks** (e.g. sword special moves) when movement is triggered
+- **Cancel special attacks** (e.g. sword special moves) when normal attack is triggered
 
 <img width="286" height="302" alt="Image" src="https://github.com/user-attachments/assets/c63e95ee-ef36-48a2-9a85-9d1a17838778" />
 <img width="322" height="300" alt="Image" src="https://github.com/user-attachments/assets/6f145345-1f6b-4b50-8b96-45a6796c25cf" />
