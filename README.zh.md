@@ -12,7 +12,7 @@
 
 ## ❤️ 主要功能
 
-- 在使用武器或工具时**允许角色移动**（可分别为武器和工具启用/禁用）
+- 在使用武器、弹弓或工具时**允许角色移动**（可分别为武器、弹弓和工具启用/禁用）
 - 在攻击时让角色**面向鼠标方向**（也支持手柄**右摇杆瞄准**）
 - 支持武器**自动挥动**（如启用，会在按住左键/使用键期间持续挥动）
 - **手柄右摇杆支持** —— 三种模式：模拟鼠标、定向攻击、边缘触发
@@ -36,8 +36,10 @@
 | `FaceMouseWhenAttack`      | bool | true | 在攻击时让角色面向鼠标/摇杆方向     |
 | `WeaponAutoswing`          | bool | true | 启用武器自动挥动，按住左键持续攻击    |
 | `EnableForWeapons`         | bool | true | 使用武器时允许移动            |
+| `EnableForSlingshot`       | bool | true | 使用弹弓时允许移动            |
 | `EnableForTools`           | bool | true | 使用工具时允许移动            |
 | `SpecialAttackCancellable` | bool | true | 普攻时自动中断特殊攻击（如剑的特殊技能） |
+| `KeyboardDontAim`          | bool | true | 使用键盘控制攻击时角色不会转向      |
 
 ### 手柄设置
 
@@ -46,6 +48,7 @@
 | `ControllerAttackMode`     | string | `edge` | 右摇杆攻击控制逻辑：`mouse`（模拟鼠标）、`direction`（独立瞄准，按使用键攻击）、`edge`（推至边缘自动攻击） |
 | `ControllerAimDeadZone`    | float  | 0.0    | 右摇杆朝向死区，防止轻微偏移导致频繁转向                                              |
 | `ControllerAttackDeadZone` | float  | 0.9    | 右摇杆攻击触发阈值，防止边缘触发模式误触                                              |
+| `ControllerSlingshot`      | bool   | true   | 弹弓用右摇杆瞄准                                                          |
 
 ## 📖 许可证
 本项目采用 MIT 许可证，详见 `LICENSE` 文件

@@ -23,7 +23,7 @@
   "config.controller-aim-dead-zone.name": "Right Stick Aim Dead Zone",
   "config.controller-aim-dead-zone.tooltip": "Stick input below this threshold will keep the current facing direction, preventing frequent turning from minor drift. Higher values increase the lock-on range.",
   "config.controller-slingshot.name": "Right Stick Controls Slingshot",
-  "config.controller-slingshot.tooltip": "When enabled, the slingshot will aim with the right stick; release the stick or press 'Use' to fire",
+  "config.controller-slingshot.tooltip": "When enabled, the slingshot will aim with the right stick",
   "config.header-common-settings": "Common Settings",
   "config.header-controller-settings": "Controller Settings"
 }

@@ -12,7 +12,7 @@ Inspired by Terraria
 
 ## ❤️ Key Features
 
-- **Allow movement** while using weapons or tools (can be enabled/disabled separately for weapons and tools)
+- **Allow movement** while using weapons, slingshots, or tools (can be enabled/disabled separately for each)
 - **Face the mouse cursor** while attacking (also supports gamepad **right-stick aiming**)
 - **Weapon autoswing** support (when enabled, weapons will continue swinging while the use key is held)
 - **Controller right-stick support** — three modes: Mouse Aim, Directional Attack, Edge Trigger
@@ -32,13 +32,15 @@ The config is located at `AttackWhenMoving/config.json`. It is recommended to us
 
 ### Common Settings
 
-| Option                     | Type | Default | Description                                                                       |
-|----------------------------|------|---------|-----------------------------------------------------------------------------------|
-| `FaceMouseWhenAttack`      | bool | true    | Face the mouse or right-stick direction when attacking                            |
-| `WeaponAutoswing`          | bool | true    | Enable weapon autoswing (hold use key to keep swinging)                           |
-| `EnableForWeapons`         | bool | true    | Allow movement while using weapons                                                |
-| `EnableForTools`           | bool | true    | Allow movement while using tools                                                  |
-| `SpecialAttackCancellable` | bool | true    | Special attack animations can be canceled by normal attacks |
+| Option                     | Type | Default | Description                                                            |
+|----------------------------|------|---------|------------------------------------------------------------------------|
+| `FaceMouseWhenAttack`      | bool | true    | Face the mouse or right-stick direction when attacking                 |
+| `WeaponAutoswing`          | bool | true    | Enable weapon autoswing (hold use key to keep swinging)                |
+| `EnableForWeapons`         | bool | true    | Allow movement while using weapons                                     |
+| `EnableForSlingshot`       | bool | true    | Allow movement while using slingshots                                  |
+| `EnableForTools`           | bool | true    | Allow movement while using tools                                       |
+| `SpecialAttackCancellable` | bool | true    | Special attack animations can be canceled by normal attacks            |
+| `KeyboardDontAim`          | bool | true    | Don't change character direction when attacking with keyboard controls |
 
 ### Controller Settings
 
@@ -47,6 +49,7 @@ The config is located at `AttackWhenMoving/config.json`. It is recommended to us
 | `ControllerAttackMode`     | string | `edge`  | Right stick control logic: `mouse` (simulate mouse), `direction` (independent aim, press use to attack), `edge` (auto-attack at stick edge) |
 | `ControllerAimDeadZone`    | float  | 0.0     | Right-stick dead zone for facing direction (prevents drift from constant re-aiming)                                                         |
 | `ControllerAttackDeadZone` | float  | 0.9     | Right-stick threshold for triggering edge-trigger attack                                                                                    |
+| `ControllerSlingshot`      | bool   | true    | Slingshot aims with right stick                                                                                                             |
 
 ## 📖 License
 This project is licensed under the MIT License. See the `LICENSE` file for details

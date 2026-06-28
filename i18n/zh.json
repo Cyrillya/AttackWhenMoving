@@ -23,7 +23,7 @@
   "config.controller-aim-dead-zone.name": "右摇杆朝向死区",
   "config.controller-aim-dead-zone.tooltip": "摇杆在此阈值以下将保持当前朝向，防止轻微偏移导致角色频繁转向。值越大，朝向锁定范围越大。",
   "config.controller-slingshot.name": "右摇杆控制弹弓",
-  "config.controller-slingshot.tooltip": "开启后，弹弓将使用右摇杆瞄准，松开摇杆或按「使用」键发射",
+  "config.controller-slingshot.tooltip": "开启后，弹弓将使用右摇杆瞄准",
   "config.header-common-settings": "通用设置",
   "config.header-controller-settings": "手柄设置"
 }
