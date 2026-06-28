@@ -7,6 +7,14 @@ namespace AttackWhenMoving;
 
 public static class Utils
 {
+    public static bool DidPlayerRightStickPush() {
+        return ModEntry.RightStickPush && !ModEntry.OldRightStickPush;
+    }
+
+    public static bool DidPlayerRightStickRelease() {
+        return !ModEntry.RightStickPush && ModEntry.OldRightStickPush;
+    }
+    
     public static void CancelSpecialAttack(Farmer who) {
         if (who.CurrentTool is not MeleeWeapon { isOnSpecial: true } weapon) return;
         

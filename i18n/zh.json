@@ -9,6 +9,8 @@
   "config.enable-tools.tooltip": "开启后，使用工具时人物不会停下",
   "config.special-cancel.name": "允许取消特殊攻击",
   "config.special-cancel.tooltip": "开启后，特殊攻击动作可被普攻取消",
+  "config.keyboard-disable.name": "使用键盘时不瞄准",
+  "config.keyboard-disable.tooltip": "开启后，玩家使用键盘控制攻击时，角色不会转向",
   "config.controller-attack-mode.name": "右摇杆攻击模式",
   "config.controller-attack-mode.tooltip": "设置右摇杆在攻击时的控制逻辑：\n- 模拟鼠标：直接移动鼠标（与原版无异）\n- 定向攻击：摇杆独立控制方向，按「使用」键使用武器\n- 边缘触发：摇杆控制方向，推至边缘自动攻击\n必须同时开启「攻击面向鼠标」才能独立控制方向\n必须同时开启「武器自动挥舞」才能正常使用「边缘触发」模式",
   "config.controller-attack-mode.mouse": "模拟鼠标",
@@ -18,6 +20,8 @@
   "config.controller-attack-dead-zone.tooltip": "摇杆需推过此阈值才会触发攻击判定，避免误触。值越大，触发攻击所需推动幅度越大。",
   "config.controller-aim-dead-zone.name": "右摇杆朝向死区",
   "config.controller-aim-dead-zone.tooltip": "摇杆在此阈值以下将保持当前朝向，防止轻微偏移导致角色频繁转向。值越大，朝向锁定范围越大。",
+  "config.controller-slingshot.name": "右摇杆控制弹弓",
+  "config.controller-slingshot.tooltip": "开启后，弹弓将使用右摇杆瞄准，松开摇杆或按「使用」键发射",
   "config.header-common-settings": "通用设置",
   "config.header-controller-settings": "手柄设置"
 }

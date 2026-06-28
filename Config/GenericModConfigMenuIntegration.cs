@@ -107,5 +107,13 @@ internal class GenericModConfigMenuIntegration
             interval: 0.01f,
             formatValue: value => value.ToString("P0")
         );
+        
+        configMenu.AddBoolOption(
+            mod: modManifest,
+            name: () => Localization.Config_ControllerSlingshot_Name(),
+            tooltip: () => Localization.Config_ControllerSlingshot_Tooltip(),
+            getValue: () => config.ControllerSlingshot,
+            setValue: value => config.ControllerSlingshot = value
+        );
     }
 }

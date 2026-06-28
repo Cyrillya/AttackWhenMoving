@@ -16,24 +16,42 @@ public class ModEntry : Mod
     internal static ModConfig Config;
     internal static ModEntry Instance;
 
-    private static FieldInfo _meleeWeaponAnotherClick;
     private static bool _oldCanMove;
     private static bool _oldUseTool;
+
+    internal static bool OldRightStickPush;
+    internal static bool RightStickPush;
 
     public override void Entry(IModHelper helper) {
         Instance = this;
         Config = Helper.ReadConfig<ModConfig>();
         Localization.Init(helper.Translation);
 
-        _meleeWeaponAnotherClick =
-            typeof(MeleeWeapon).GetField("anotherClick", BindingFlags.NonPublic | BindingFlags.Instance);
-
         helper.Events.GameLoop.GameLaunched += (sender, args) => { GenericModConfigMenuIntegration.Init(); };
 
         helper.Events.GameLoop.UpdateTicking += (sender, args) => {
-            if (TryPerformAttackNow(out var weapon)) {
-                if (Config.SpecialAttackCancellable) Utils.CancelSpecialAttack(Game1.player);
-                Utils.UseWeapon(weapon);
+            var currentPadState = Game1.input.GetGamePadState();
+            var stick = currentPadState.ThumbSticks.Right;
+            OldRightStickPush = RightStickPush;
+            RightStickPush = Config.ControllerSlingshot && Game1.options.gamepadControls &&
+                             stick.Length() > Config.ControllerAttackDeadZone;
+
+            if (TryPerformAttackNow()) {
+                switch (Game1.player.CurrentTool) {
+                    case MeleeWeapon weapon: {
+                        if (Config.SpecialAttackCancellable) Utils.CancelSpecialAttack(Game1.player);
+                        Utils.UseWeapon(weapon);
+                        break;
+                    }
+                    case Slingshot slingshot:
+                        Game1.player.BeginUsingTool();
+                        break;
+                    default:
+                        Instance.Monitor.Log(
+                            $"CurrentTool is not a weapon or slingshot: {Game1.player.CurrentTool?.GetType().Name ?? "null"}",
+                            LogLevel.Trace);
+                        break;
+                }
             }
         };
 
@@ -49,11 +67,17 @@ public class ModEntry : Mod
             nameof(HookWarpFarmerMethod));
         Hook(GetUpdateControlInputMethod(),
             transpilerName: nameof(UpdateControlInputTranspiler));
+        Hook(GetUpdateAimPosMethod(),
+            transpilerName: nameof(UpdateAimPosTranspiler));
     }
 
     private static MethodInfo? GetUpdateControlInputMethod() {
         var displayClass = typeof(Game1).GetNestedType("<>c__DisplayClass978_0", BindingFlags.NonPublic);
         return displayClass?.GetMethod("<UpdateControlInput>b__0", BindingFlags.Instance | BindingFlags.NonPublic);
+    }
+
+    private static MethodInfo? GetUpdateAimPosMethod() {
+        return typeof(Slingshot).GetMethod("updateAimPos", BindingFlags.Instance | BindingFlags.NonPublic);
     }
 
     private static MethodInfo? Hook(MethodInfo? method, string? prefixName = null, string? postfixName = null,
@@ -199,8 +223,13 @@ public class ModEntry : Mod
     }
 
     private static bool FaceMouse(Farmer who) {
-        if (!Config.FaceMouseWhenAttack) return false;
-        if (!who.IsLocalPlayer) return false;
+        if (!Config.FaceMouseWhenAttack)
+            return false;
+        if (!who.IsLocalPlayer)
+            return false;
+        if (Config.KeyboardDontAim &&
+            Game1.isOneOfTheseKeysDown(Game1.input.GetKeyboardState(), Game1.options.useToolButton))
+            return false;
 
         var plrPosition = who.getLocalPosition(Game1.viewport);
         double theta;
@@ -247,20 +276,18 @@ public class ModEntry : Mod
             Game1.player is null)
             return false;
         var who = Game1.player;
-        if (who.CurrentTool is not MeleeWeapon ||
+        if ((who.CurrentTool is not MeleeWeapon && who.CurrentTool is not Slingshot) ||
             who.swimming.Value || who.bathingClothes.Value || who.onBridge.Value)
             return false;
         return true;
     }
 
-    private static bool TryPerformAttackNow(out MeleeWeapon? weapon) {
-        weapon = null;
+    private static bool TryPerformAttackNow() {
         if (!SuitableAttackTiming() ||
             !Utils.DidPlayerJustLeftHold())
             return false;
         if (!Config.WeaponAutoswing && !Game1.didPlayerJustLeftClick(true))
             return false;
-        weapon = Game1.player.CurrentTool as MeleeWeapon;
         return true;
     }
 
@@ -311,6 +338,78 @@ public class ModEntry : Mod
             codes.Insert(i + 1, new CodeInstruction(OpCodes.Brfalse, branchTarget));
 
             break; // Only replace the first occurrence
+        }
+
+        // Second pass: after "bool useToolButtonReleased = false;" (ldc.i4.0 + stloc.3),
+        // insert a call to Utils.DidPlayerRightStickRelease() that overrides it to true
+        // when the right stick was just released.
+        var didPlayerRightStickRelease = typeof(Utils).GetMethod(nameof(Utils.DidPlayerRightStickRelease),
+            BindingFlags.Public | BindingFlags.Static);
+        if (didPlayerRightStickRelease is null) {
+            Instance.Monitor.Log(
+                "UpdateControlInputTranspiler: reflection failed for Utils.DidPlayerRightStickRelease",
+                LogLevel.Error);
+        }
+        else {
+            for (int i = 0; i < codes.Count - 1; i++) {
+                if (codes[i].opcode != OpCodes.Ldc_I4_0) continue;
+                if (codes[i + 1].opcode != OpCodes.Stloc_3) continue;
+
+                // i+1 is stloc.3 (useToolButtonReleased = false).
+                // Mark the next original instruction with a skip label.
+                var nextInstr = codes[i + 2];
+                var skipLabel = new Label();
+                nextInstr.labels.Add(skipLabel);
+
+                // Insert: call DidPlayerRightStickRelease + brfalse(skip) + ldc.i4.1 + stloc.3
+                var injected = new List<CodeInstruction> {
+                    new(OpCodes.Call, didPlayerRightStickRelease),
+                    new(OpCodes.Brfalse, skipLabel),
+                    new(OpCodes.Ldc_I4_1),
+                    new(OpCodes.Stloc_3),
+                };
+                codes.InsertRange(i + 2, injected);
+
+                break; // Only one initialization in the method
+            }
+        }
+
+        return codes;
+    }
+
+    /// <summary>Returns the right-stick value when <c>ControllerSlingshot</c> is enabled,
+    /// otherwise falls back to the left-stick (original behavior).</summary>
+    internal static Vector2 GetSlingshotAimStick(ref GamePadThumbSticks sticks) {
+        return Config.ControllerSlingshot ? sticks.Right : sticks.Left;
+    }
+
+    private static IEnumerable<CodeInstruction> UpdateAimPosTranspiler(
+        IEnumerable<CodeInstruction> instructions) {
+        // Replace call GamePadThumbSticks::get_Left() with a call to our own
+        // GetSlingshotAimStick(ref GamePadThumbSticks) so that the runtime
+        // config ControllerSlingshot decides Left vs Right at runtime.
+        var getLeft = typeof(GamePadThumbSticks).GetMethod("get_Left", Type.EmptyTypes);
+        var ourMethod = typeof(ModEntry).GetMethod(nameof(GetSlingshotAimStick),
+            BindingFlags.NonPublic | BindingFlags.Static);
+
+        if (getLeft is null || ourMethod is null) {
+            Instance.Monitor.Log(
+                "UpdateAimPosTranspiler: reflection failed for get_Left / GetSlingshotAimStick",
+                LogLevel.Error);
+            return instructions;
+        }
+
+        var codes = new List<CodeInstruction>(instructions);
+        for (int i = 0; i < codes.Count; i++) {
+            if (codes[i].opcode != OpCodes.Call || !Equals(codes[i].operand, getLeft))
+                continue;
+
+            // The stack already has &local5 (GamePadThumbSticks) from ldloca.s 5.
+            // Replace the call so the address is passed via ref to our method,
+            // which returns the appropriate Vector2 for stloc.3 to consume.
+            codes[i].operand = ourMethod;
+
+            break; // Only one ThumbSticks.get_Left() in the method
         }
 
         return codes;

@@ -9,6 +9,8 @@
   "config.enable-tools.tooltip": "Whether to allow moving when using tools",
   "config.special-cancel.name": "Allow Special Attack Cancel",
   "config.special-cancel.tooltip": "When enabled, special attack animations can be canceled by normal attacks.",
+  "config.keyboard-disable.name": "Don't Aim When Using Keyboard",
+  "config.keyboard-disable.tooltip": "When enabled, the character will not change direction when using keyboard controls to attack.",
   "config.controller-attack-mode.name": "Right Stick Attack Mode",
   "config.controller-attack-mode.tooltip": "Sets the right stick's control logic during attack:\n- Mouse Aim: directly moves the mouse (same as default)\n- Directional Attack: stick independently controls direction, press 'Use' to use weapon\n- Edge Trigger: stick controls direction, auto-attack when pushed to the edge\n'Face Mouse When Attack' must be enabled for directional control to work\n'Weapon Autoswing' must be enabled for 'Edge Trigger' mode to function properly",
   "config.controller-attack-mode.mouse": "Mouse Aim",
@@ -18,6 +20,8 @@
   "config.controller-attack-dead-zone.tooltip": "The stick must exceed this threshold to trigger an attack, preventing accidental inputs. Higher values require larger stick deflection.",
   "config.controller-aim-dead-zone.name": "Right Stick Aim Dead Zone",
   "config.controller-aim-dead-zone.tooltip": "Stick input below this threshold will keep the current facing direction, preventing frequent turning from minor drift. Higher values increase the lock-on range.",
+  "config.controller-slingshot.name": "Right Stick Controls Slingshot",
+  "config.controller-slingshot.tooltip": "When enabled, the slingshot will aim with the right stick; release the stick or press 'Use' to fire",
   "config.header-common-settings": "Common Settings",
   "config.header-controller-settings": "Controller Settings"
 }
