@@ -19,9 +19,6 @@ public class ModEntry : Mod
     private static bool _oldCanMove;
     private static bool _oldUseTool;
 
-    internal static bool OldRightStickPush;
-    internal static bool RightStickPush;
-
     public override void Entry(IModHelper helper) {
         Instance = this;
         Config = Helper.ReadConfig<ModConfig>();
@@ -30,28 +27,9 @@ public class ModEntry : Mod
         helper.Events.GameLoop.GameLaunched += (sender, args) => { GenericModConfigMenuIntegration.Init(); };
 
         helper.Events.GameLoop.UpdateTicking += (sender, args) => {
-            var currentPadState = Game1.input.GetGamePadState();
-            var stick = currentPadState.ThumbSticks.Right;
-            OldRightStickPush = RightStickPush;
-            RightStickPush = Config.ControllerSlingshot && Game1.options.gamepadControls &&
-                             stick.Length() > Config.ControllerAttackDeadZone;
-
-            if (TryPerformAttackNow()) {
-                switch (Game1.player.CurrentTool) {
-                    case MeleeWeapon weapon: {
-                        if (Config.SpecialAttackCancellable) Utils.CancelSpecialAttack(Game1.player);
-                        Utils.UseWeapon(weapon);
-                        break;
-                    }
-                    case Slingshot slingshot:
-                        Game1.player.BeginUsingTool();
-                        break;
-                    default:
-                        Instance.Monitor.Log(
-                            $"CurrentTool is not a weapon or slingshot: {Game1.player.CurrentTool?.GetType().Name ?? "null"}",
-                            LogLevel.Trace);
-                        break;
-                }
+            if (TryPerformAttackNow() && Game1.player.CurrentTool is MeleeWeapon weapon) {
+                if (Config.SpecialAttackCancellable) Utils.CancelSpecialAttack(Game1.player);
+                Utils.UseWeapon(weapon);
             }
         };
 
@@ -245,12 +223,13 @@ public class ModEntry : Mod
             theta = Math.Atan2(-direPosition.Y, direPosition.X);
         }
 
-        who.FacingDirection = theta switch {
+        var direction = theta switch {
             > MathF.PI / 4 and < 3 * MathF.PI / 4 => 0, // Up
             < -MathF.PI / 4 and > -3 * MathF.PI / 4 => 2, // Down
             >= -MathF.PI / 4 and <= MathF.PI / 4 => 1, // Right
             _ => 3 // Left
         };
+        who.faceDirection(direction);
         return true;
     }
 
@@ -276,7 +255,7 @@ public class ModEntry : Mod
             Game1.player is null)
             return false;
         var who = Game1.player;
-        if ((who.CurrentTool is not MeleeWeapon && who.CurrentTool is not Slingshot) ||
+        if (who.CurrentTool is not MeleeWeapon and not Slingshot ||
             who.swimming.Value || who.bathingClothes.Value || who.onBridge.Value)
             return false;
         return true;
@@ -338,40 +317,6 @@ public class ModEntry : Mod
             codes.Insert(i + 1, new CodeInstruction(OpCodes.Brfalse, branchTarget));
 
             break; // Only replace the first occurrence
-        }
-
-        // Second pass: after "bool useToolButtonReleased = false;" (ldc.i4.0 + stloc.3),
-        // insert a call to Utils.DidPlayerRightStickRelease() that overrides it to true
-        // when the right stick was just released.
-        var didPlayerRightStickRelease = typeof(Utils).GetMethod(nameof(Utils.DidPlayerRightStickRelease),
-            BindingFlags.Public | BindingFlags.Static);
-        if (didPlayerRightStickRelease is null) {
-            Instance.Monitor.Log(
-                "UpdateControlInputTranspiler: reflection failed for Utils.DidPlayerRightStickRelease",
-                LogLevel.Error);
-        }
-        else {
-            for (int i = 0; i < codes.Count - 1; i++) {
-                if (codes[i].opcode != OpCodes.Ldc_I4_0) continue;
-                if (codes[i + 1].opcode != OpCodes.Stloc_3) continue;
-
-                // i+1 is stloc.3 (useToolButtonReleased = false).
-                // Mark the next original instruction with a skip label.
-                var nextInstr = codes[i + 2];
-                var skipLabel = new Label();
-                nextInstr.labels.Add(skipLabel);
-
-                // Insert: call DidPlayerRightStickRelease + brfalse(skip) + ldc.i4.1 + stloc.3
-                var injected = new List<CodeInstruction> {
-                    new(OpCodes.Call, didPlayerRightStickRelease),
-                    new(OpCodes.Brfalse, skipLabel),
-                    new(OpCodes.Ldc_I4_1),
-                    new(OpCodes.Stloc_3),
-                };
-                codes.InsertRange(i + 2, injected);
-
-                break; // Only one initialization in the method
-            }
         }
 
         return codes;

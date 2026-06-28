@@ -7,14 +7,6 @@ namespace AttackWhenMoving;
 
 public static class Utils
 {
-    public static bool DidPlayerRightStickPush() {
-        return ModEntry.RightStickPush && !ModEntry.OldRightStickPush;
-    }
-
-    public static bool DidPlayerRightStickRelease() {
-        return !ModEntry.RightStickPush && ModEntry.OldRightStickPush;
-    }
-    
     public static void CancelSpecialAttack(Farmer who) {
         if (who.CurrentTool is not MeleeWeapon { isOnSpecial: true } weapon) return;
         
@@ -78,10 +70,15 @@ public static class Utils
     }
 
     public static bool AllowMoving(this Tool item) {
-        if (item is FishingRod) return false;
-        if (!IsTool(item) && ModEntry.Config.EnableForWeapons) return true;
-        if (IsTool(item) && ModEntry.Config.EnableForTools) return true;
-        return false;
+        switch (item) {
+            case FishingRod:
+                return false;
+            case Slingshot:
+                return ModEntry.Config.EnableForSlingshot;
+        }
+
+        if (!IsTool(item)) return ModEntry.Config.EnableForWeapons;
+        else return ModEntry.Config.EnableForTools;
     }
 
     public static bool IsTool(this Tool item) => item is not MeleeWeapon weapon || weapon.isScythe();

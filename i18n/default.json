@@ -5,6 +5,8 @@
   "config.weapon-autoswing.tooltip": "When enabled, holding down the attack button will continuously use the weapon's light attack",
   "config.enable-weapons.name": "Allow Moving for Weapons",
   "config.enable-weapons.tooltip": "Whether to allow moving when using weapons",
+  "config.enable-slingshot.name": "Allow Moving for Slingshot",
+  "config.enable-slingshot.tooltip": "Whether to allow moving when using slingshot",
   "config.enable-tools.name": "Allow Moving for Tools",
   "config.enable-tools.tooltip": "Whether to allow moving when using tools",
   "config.special-cancel.name": "Allow Special Attack Cancel",

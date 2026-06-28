@@ -8,10 +8,11 @@ internal sealed class ModConfig
 {
     public bool FaceMouseWhenAttack { get; set; } = true;
     public bool WeaponAutoswing { get; set; } = true;
-    public bool EnableForWeapons { get; set; } = true;
-    public bool EnableForTools { get; set; } = true;
     public bool SpecialAttackCancellable { get; set; } = true;
     public bool KeyboardDontAim { get; set; } = true;
+    public bool EnableForWeapons { get; set; } = true;
+    public bool EnableForSlingshot { get; set; } = true;
+    public bool EnableForTools { get; set; } = true;
 
     /// <summary>
     /// Options: mouse, direction, edge

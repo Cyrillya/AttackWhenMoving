@@ -5,6 +5,8 @@
   "config.weapon-autoswing.tooltip": "开启后，按住攻击键可以持续使用武器轻击",
   "config.enable-weapons.name": "使用武器时允许移动",
   "config.enable-weapons.tooltip": "开启后，使用武器时人物不会停下",
+  "config.enable-slingshot.name": "使用弹弓时允许移动",
+  "config.enable-slingshot.tooltip": "开启后，使用弹弓时人物不会停下",
   "config.enable-tools.name": "使用工具时允许移动",
   "config.enable-tools.tooltip": "开启后，使用工具时人物不会停下",
   "config.special-cancel.name": "允许取消特殊攻击",

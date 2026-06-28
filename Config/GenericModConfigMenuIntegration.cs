@@ -37,6 +37,22 @@ internal class GenericModConfigMenuIntegration
             getValue: () => config.WeaponAutoswing,
             setValue: value => config.WeaponAutoswing = value
         );
+        
+        configMenu.AddBoolOption(
+            mod: modManifest,
+            name: () => Localization.Config_SpecialCancel_Name(),
+            tooltip: () => Localization.Config_SpecialCancel_Tooltip(),
+            getValue: () => config.SpecialAttackCancellable,
+            setValue: value => config.SpecialAttackCancellable = value
+        );
+        
+        configMenu.AddBoolOption(
+            mod: modManifest,
+            name: () => Localization.Config_KeyboardDisable_Name(),
+            tooltip: () => Localization.Config_KeyboardDisable_Tooltip(),
+            getValue: () => config.KeyboardDontAim,
+            setValue: value => config.KeyboardDontAim = value
+        );
 
         configMenu.AddBoolOption(
             mod: modManifest,
@@ -45,6 +61,14 @@ internal class GenericModConfigMenuIntegration
             getValue: () => config.EnableForWeapons,
             setValue: value => config.EnableForWeapons = value
         );
+
+        configMenu.AddBoolOption(
+            mod: modManifest,
+            name: () => Localization.Config_EnableSlingshot_Name(),
+            tooltip: () => Localization.Config_EnableSlingshot_Tooltip(),
+            getValue: () => config.EnableForSlingshot,
+            setValue: value => config.EnableForSlingshot = value
+        );
         
         configMenu.AddBoolOption(
             mod: modManifest,
@@ -52,14 +76,6 @@ internal class GenericModConfigMenuIntegration
             tooltip: () => Localization.Config_EnableTools_Tooltip(),
             getValue: () => config.EnableForTools,
             setValue: value => config.EnableForTools = value
-        );
-        
-        configMenu.AddBoolOption(
-            mod: modManifest,
-            name: () => Localization.Config_SpecialCancel_Name(),
-            tooltip: () => Localization.Config_SpecialCancel_Tooltip(),
-            getValue: () => config.SpecialAttackCancellable,
-            setValue: value => config.SpecialAttackCancellable = value
         );
         
         configMenu.AddSectionTitle(
