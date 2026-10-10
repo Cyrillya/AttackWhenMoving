@@ -27,8 +27,19 @@ public class ModEntry : Mod
         helper.Events.GameLoop.GameLaunched += (sender, args) => { GenericModConfigMenuIntegration.Init(); };
 
         helper.Events.GameLoop.UpdateTicking += (sender, args) => {
-            if (TryPerformAttackNow() && Game1.player.CurrentTool is MeleeWeapon weapon) {
-                if (Config.SpecialAttackCancellable) Utils.CancelSpecialAttack(Game1.player);
+            var who = Game1.player;
+            if (who is null) return;
+
+            // Using a tool and sitting on furniture are mutually exclusive in the base game:
+            // Farmer.BeginSitting refuses to start while UsingTool, and Game1.pressUseToolButton
+            // sends the use-tool button to the action button (which stands the player up) while
+            // they're seated. If both flags are set anyway, the player is locked in the chair with
+            // a swing that keeps restarting and no way to open the pause menu, so cancel the tool
+            // animation to give control back.
+            if (who.IsSitting() && who.UsingTool) who.completelyStopAnimatingOrDoingAction();
+
+            if (TryPerformAttackNow() && who.CurrentTool is MeleeWeapon weapon) {
+                if (Config.SpecialAttackCancellable) Utils.CancelSpecialAttack(who);
                 Utils.UseWeapon(weapon);
             }
         };
@@ -267,6 +278,12 @@ public class ModEntry : Mod
             return false;
         if (!Config.WeaponAutoswing && !Game1.didPlayerJustLeftClick(true))
             return false;
+        // Sitting on furniture: refuse this swing and stand the player up instead, the same way
+        // the game handles the use-tool button while seated.
+        if (Game1.player.IsSitting()) {
+            Utils.CancelSwingWhileSitting(Game1.player);
+            return false;
+        }
         return true;
     }
 
