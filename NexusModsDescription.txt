@@ -7,10 +7,11 @@
 [center][/center]
 [size=4][font=Verdana][b]❤️ Key Features[/b][/font][/size]
 [list]
-[*]Allow movement while using weapons or tools (can be enabled/disabled separately for weapons and tools)[/*]
+[*]Allow movement while using weapons, slingshots, or tools (can be enabled/disabled separately for each)[/*]
 [*]Face the mouse cursor while attacking (also supports gamepad right-stick aiming)[/*]
 [*]Weapon autoswing support (when enabled, weapons will continue swinging while the use key is held)[/*]
 [*][b]Controller right-stick support[/b] — three modes: Mouse Aim, Directional Attack, Edge Trigger[/*]
+[*][b]Flick to fire the slingshot[/b] — push the right stick to the edge to draw, let it snap back to shoot, or pull it back to put the shot away[/*]
 [*][b]Cancel special attacks[/b] — special attack animations can be interrupted by normal attacks[/*]
 [/list]
 [size=4][font=Verdana][b]💻 Installation[/b][/font][/size]
@@ -26,8 +27,10 @@ The config is located at [i]AttackWhenMoving/config.json[/i]. It is recommended 
 [*][b]FaceMouseWhenAttack[/b] (bool, default: true) — Face the mouse or right-stick direction when attacking[/*]
 [*][b]WeaponAutoswing[/b] (bool, default: true) — Enable weapon autoswing (hold use key to keep swinging)[/*]
 [*][b]EnableForWeapons[/b] (bool, default: true) — Allow movement while using weapons[/*]
+[*][b]EnableForSlingshot[/b] (bool, default: true) — Allow movement while using slingshots[/*]
 [*][b]EnableForTools[/b] (bool, default: true) — Allow movement while using tools[/*]
 [*][b]SpecialAttackCancellable[/b] (bool, default: true) — Special attack animations can be canceled by normal attacks[/*]
+[*][b]KeyboardDontAim[/b] (bool, default: true) — Don't change character direction when attacking with keyboard controls[/*]
 [/list]
 
 [b]Controller Settings[/b]
@@ -35,6 +38,9 @@ The config is located at [i]AttackWhenMoving/config.json[/i]. It is recommended 
 [*][b]ControllerAttackMode[/b] (string, default: edge) — Right stick control logic: [i]mouse[/i] (simulate mouse), [i]direction[/i] (independent aim, press use to attack), [i]edge[/i] (auto-attack at stick edge)[/*]
 [*][b]ControllerAimDeadZone[/b] (float, default: 0.0) — Right-stick dead zone for facing direction (prevents drift from constant re-aiming)[/*]
 [*][b]ControllerAttackDeadZone[/b] (float, default: 0.9) — Right-stick threshold for triggering edge-trigger attack[/*]
+[*][b]ControllerSlingshot[/b] (bool, default: true) — Slingshot aims with the right stick[/*]
+[*][b]ControllerSlingshotFlickFire[/b] (bool, default: true) — Fire by flicking the right stick: push it to the edge to draw and aim, then let it snap back to the center to shoot. Pulling it back by hand puts the slingshot away instead (requires ControllerSlingshot)[/*]
+[*][b]ControllerSlingshotFlickSensitivity[/b] (float, default: 0.4) — How slow a return to the center may count as a release: 0 = only a real snap-back, 1 = even a very slow push back; slower returns put the shot away[/*]
 [/list]
 
 [url=https://github.com/Cyrillya/AttackWhenMoving/tree/main]Source Code[/url] | Open Source under MIT License
