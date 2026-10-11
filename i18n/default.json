@@ -25,9 +25,9 @@
   "config.controller-slingshot.name": "Right Stick Controls Slingshot",
   "config.controller-slingshot.tooltip": "When enabled, the slingshot will aim with the right stick",
   "config.controller-slingshot-flick-fire.name": "Right Stick Flick to Fire",
-  "config.controller-slingshot-flick-fire.tooltip": "When enabled, the right stick controls the whole slingshot shot: push it past the 'Right Stick Attack Dead Zone' to draw and aim, hold until the slingshot is charged, then let it snap back to the center to fire. Pulling the stick back by hand instead puts the slingshot away without firing, so the shot is never left drawn.\nHow fast the stick must come back to count as letting go is set by 'Flick Detection Sensitivity'\nRequires 'Right Stick Controls Slingshot'",
+  "config.controller-slingshot-flick-fire.tooltip": "When enabled, the right stick controls the whole slingshot shot:\n  push it past the 'Right Stick Attack Dead Zone' to draw and aim,\n  hold until the slingshot is charged,\n  then let it snap back to the center to fire.\nPulling the stick back by hand instead puts the slingshot away without firing, so the shot is never left drawn.\nHow fast the stick must come back to count as letting go is set by 'Flick Detection Sensitivity'\nRequires 'Right Stick Controls Slingshot'",
   "config.controller-slingshot-flick-sensitivity.name": "Flick Detection Sensitivity",
-  "config.controller-slingshot-flick-sensitivity.tooltip": "How quickly the right stick must return to the center to count as a release that fires the slingshot.\nAt 100%, even a very slow push back to the center fires the shot; at 0%, only a real snap-back (the stick returning on its own) does. The default is tuned so a natural release fires while a deliberate slow return puts the shot away instead.",
+  "config.controller-slingshot-flick-sensitivity.tooltip": "How quickly the right stick must return to the center to count as a release that fires the slingshot.\n- At 100%, even a very slow push back to the center fires the shot.\n- At 0%, only a real snap-back (the stick returning on its own) does.\nThe default is tuned so a natural release fires while a deliberate slow return puts the shot away instead.",
   "config.header-common-settings": "Common Settings",
   "config.header-controller-settings": "Controller Settings"
 }
