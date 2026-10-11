@@ -16,6 +16,7 @@ Inspired by Terraria
 - **Face the mouse cursor** while attacking (also supports gamepad **right-stick aiming**)
 - **Weapon autoswing** support (when enabled, weapons will continue swinging while the use key is held)
 - **Controller right-stick support** — three modes: Mouse Aim, Directional Attack, Edge Trigger
+- **Flick to fire the slingshot** — push the right stick to the edge to draw, let it snap back to shoot, or pull it back to put the shot away
 - **Cancel special attacks** — special attack animations can be interrupted by normal attacks
 
 <img width="286" height="302" alt="Image" src="https://github.com/user-attachments/assets/c63e95ee-ef36-48a2-9a85-9d1a17838778" />
@@ -44,12 +45,14 @@ The config is located at `AttackWhenMoving/config.json`. It is recommended to us
 
 ### Controller Settings
 
-| Option                     | Type   | Default | Description                                                                                                                                 |
-|----------------------------|--------|---------|---------------------------------------------------------------------------------------------------------------------------------------------|
-| `ControllerAttackMode`     | string | `edge`  | Right stick control logic: `mouse` (simulate mouse), `direction` (independent aim, press use to attack), `edge` (auto-attack at stick edge) |
-| `ControllerAimDeadZone`    | float  | 0.0     | Right-stick dead zone for facing direction (prevents drift from constant re-aiming)                                                         |
-| `ControllerAttackDeadZone` | float  | 0.9     | Right-stick threshold for triggering edge-trigger attack                                                                                    |
-| `ControllerSlingshot`      | bool   | true    | Slingshot aims with right stick                                                                                                             |
+| Option                                | Type   | Default | Description                                                                                                                                                                                                   |
+|---------------------------------------|--------|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `ControllerAttackMode`                | string | `edge`  | Right stick control logic: `mouse` (simulate mouse), `direction` (independent aim, press use to attack), `edge` (auto-attack at stick edge)                                                                   |
+| `ControllerAimDeadZone`               | float  | 0.0     | Right-stick dead zone for facing direction (prevents drift from constant re-aiming)                                                                                                                           |
+| `ControllerAttackDeadZone`            | float  | 0.9     | Right-stick threshold for triggering edge-trigger attack                                                                                                                                                      |
+| `ControllerSlingshot`                 | bool   | true    | Slingshot aims with right stick                                                                                                                                                                               |
+| `ControllerSlingshotFlickFire`        | bool   | true    | Fire by flicking the right stick: push it to the edge to draw and aim, then let it snap back to the center to shoot. Pulling it back by hand puts the slingshot away instead (requires `ControllerSlingshot`) |
+| `ControllerSlingshotFlickSensitivity` | float  | 0.4     | How slow a return to the center may count as a release: 0 = only a real snap-back, 1 = even a very slow push back; slower returns put the shot away                                                           |
 
 ## 📖 License
 This project is licensed under the MIT License. See the `LICENSE` file for details

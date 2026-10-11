@@ -131,5 +131,25 @@ internal class GenericModConfigMenuIntegration
             getValue: () => config.ControllerSlingshot,
             setValue: value => config.ControllerSlingshot = value
         );
+        
+        configMenu.AddBoolOption(
+            mod: modManifest,
+            name: () => Localization.Config_ControllerSlingshotFlickFire_Name(),
+            tooltip: () => Localization.Config_ControllerSlingshotFlickFire_Tooltip(),
+            getValue: () => config.ControllerSlingshotFlickFire,
+            setValue: value => config.ControllerSlingshotFlickFire = value
+        );
+        
+        configMenu.AddNumberOption(
+            mod: modManifest,
+            name: () => Localization.Config_ControllerSlingshotFlickSensitivity_Name(),
+            tooltip: () => Localization.Config_ControllerSlingshotFlickSensitivity_Tooltip(),
+            getValue: () => config.ControllerSlingshotFlickSensitivity,
+            setValue: value => config.ControllerSlingshotFlickSensitivity = value,
+            min: 0f,
+            max: 1f,
+            interval: 0.01f,
+            formatValue: value => value.ToString("P0")
+        );
     }
 }

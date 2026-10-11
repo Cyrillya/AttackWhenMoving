@@ -38,6 +38,8 @@ public class ModEntry : Mod
             // animation to give control back.
             if (who.IsSitting() && who.UsingTool) who.completelyStopAnimatingOrDoingAction();
 
+            SlingshotFlickFire.Update(who);
+
             if (TryPerformAttackNow() && who.CurrentTool is MeleeWeapon weapon) {
                 if (Config.SpecialAttackCancellable) Utils.CancelSpecialAttack(who);
                 Utils.UseWeapon(weapon);
@@ -342,6 +344,10 @@ public class ModEntry : Mod
     /// <summary>Returns the right-stick value when <c>ControllerSlingshot</c> is enabled,
     /// otherwise falls back to the left-stick (original behavior).</summary>
     internal static Vector2 GetSlingshotAimStick(ref GamePadThumbSticks sticks) {
+        // A shot fired by flicking the stick keeps the direction it was flicked in, rather than
+        // wherever the stick has snapped back to by the time the shot leaves (see SlingshotFlickFire).
+        if (SlingshotFlickFire.AimOverride is Vector2 aim) return aim;
+
         return Config.ControllerSlingshot ? sticks.Right : sticks.Left;
     }
 

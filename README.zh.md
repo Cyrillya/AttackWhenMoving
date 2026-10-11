@@ -16,6 +16,7 @@
 - 在攻击时让角色**面向鼠标方向**（也支持手柄**右摇杆瞄准**）
 - 支持武器**自动挥动**（如启用，会在按住左键/使用键期间持续挥动）
 - **手柄右摇杆支持** —— 三种模式：模拟鼠标、定向攻击、边缘触发
+- 弹弓**回弹发射** —— 右摇杆推至边缘蓄力瞄准，松手回弹即发射，推回则收弓取消
 - 武器特殊攻击可被普攻**取消**
 
 <img width="286" height="302" alt="Image" src="https://github.com/user-attachments/assets/c63e95ee-ef36-48a2-9a85-9d1a17838778" />
@@ -43,12 +44,14 @@
 
 ### 手柄设置
 
-| 选项                         | 类型     | 默认值    | 说明                                                                |
-|----------------------------|--------|--------|-------------------------------------------------------------------|
-| `ControllerAttackMode`     | string | `edge` | 右摇杆攻击控制逻辑：`mouse`（模拟鼠标）、`direction`（独立瞄准，按使用键攻击）、`edge`（推至边缘自动攻击） |
-| `ControllerAimDeadZone`    | float  | 0.0    | 右摇杆朝向死区，防止轻微偏移导致频繁转向                                              |
-| `ControllerAttackDeadZone` | float  | 0.9    | 右摇杆攻击触发阈值，防止边缘触发模式误触                                              |
-| `ControllerSlingshot`      | bool   | true   | 弹弓用右摇杆瞄准                                                          |
+| 选项                                  | 类型   | 默认值 | 说明                                                                                                       |
+|---------------------------------------|--------|--------|------------------------------------------------------------------------------------------------------------|
+| `ControllerAttackMode`                | string | `edge` | 右摇杆攻击控制逻辑：`mouse`（模拟鼠标）、`direction`（独立瞄准，按使用键攻击）、`edge`（推至边缘自动攻击） |
+| `ControllerAimDeadZone`               | float  | 0.0    | 右摇杆朝向死区，防止轻微偏移导致频繁转向                                                                   |
+| `ControllerAttackDeadZone`            | float  | 0.9    | 右摇杆攻击触发阈值，防止边缘触发模式误触                                                                   |
+| `ControllerSlingshot`                 | bool   | true   | 弹弓用右摇杆瞄准                                                                                           |
+| `ControllerSlingshotFlickFire`        | bool   | true   | 右摇杆推至边缘蓄力瞄准，松手回弹即发射；用手指推回则收弓取消（需开启 `ControllerSlingshot`）               |
+| `ControllerSlingshotFlickSensitivity` | float  | 0.4    | 摇杆回到中央多慢仍算作松手发射：0 只认可真正自行弹回，1 连缓慢推回也会发射；更慢则收弓取消                 |
 
 ## 📖 许可证
 本项目采用 MIT 许可证，详见 `LICENSE` 文件

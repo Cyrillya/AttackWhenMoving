@@ -24,6 +24,10 @@
   "config.controller-aim-dead-zone.tooltip": "摇杆在此阈值以下将保持当前朝向，防止轻微偏移导致角色频繁转向。值越大，朝向锁定范围越大。",
   "config.controller-slingshot.name": "右摇杆控制弹弓",
   "config.controller-slingshot.tooltip": "开启后，弹弓将使用右摇杆瞄准",
+  "config.controller-slingshot-flick-fire.name": "右摇杆回弹发射",
+  "config.controller-slingshot-flick-fire.tooltip": "开启后，右摇杆即可完成弹弓的整套操作：将摇杆推过「右摇杆攻击死区」就会蓄力并瞄准，按住直至蓄力完成后松手，让摇杆回弹到中央即可发射。若用手指把摇杆推回（而非松手回弹），则收弓取消本次准备，不会一直保持拉弓状态。\n摇杆需要多快回中才算松手由「回弹检测灵敏度」决定\n必须同时开启「右摇杆控制弹弓」才能生效",
+  "config.controller-slingshot-flick-sensitivity.name": "回弹检测灵敏度",
+  "config.controller-slingshot-flick-sensitivity.tooltip": "右摇杆需要多快回到中央，才会被判定为松手并发射弹弓。\n调至最大时，即使非常缓慢地把摇杆推回中央也会发射；调至最小时，只有摇杆真正自行弹回（在几个画面帧内回到中央）才会发射。默认值已调校为：自然的松手回弹能够发射，而刻意缓慢推回则收弓取消。",
   "config.header-common-settings": "通用设置",
   "config.header-controller-settings": "手柄设置"
 }
